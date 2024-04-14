@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון נורא</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffd700;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #000;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #display {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 20px;
+            font-size: 36px;
+            box-sizing: border-box;
+            text-align: right;
+            border: none;
+            background-color: #ffd700;
+            color: #000;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            font-size: 24px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff69b4;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #ff1493;
+        }
+
+        button:active {
+            transform: translateY(2px);
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .equal-button {
+            background-color: #ff4500;
+            color: #fff;
+        }
+
+        .clear-button {
+            background-color: #ff0000;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <input id="display" readonly><br>
+        <div class="row">
+            <button onclick="addToDisplay('7')">7</button>
+            <button onclick="addToDisplay('8')">8</button>
+            <button onclick="addToDisplay('9')">9</button>
+            <button onclick="addToDisplay('+')">+</button>
+        </div>
+        <div class="row">
+            <button onclick="addToDisplay('4')">4</button>
+            <button onclick="addToDisplay('5')">5</button>
+            <button onclick="addToDisplay('6')">6</button>
+            <button onclick="addToDisplay('-')">-</button>
+        </div>
+        <div class="row">
+            <button onclick="addToDisplay('1')">1</button>
+            <button onclick="addToDisplay('2')">2</button>
+            <button onclick="addToDisplay('3')">3</button>
+            <button onclick="addToDisplay('*')">*</button>
+        </div>
+        <div class="row">
+            <button onclick="addToDisplay('0')">0</button>
+            <button onclick="addToDisplay('.')">.</button>
+            <button onclick="addToDisplay('/')">/</button>
+            <button onclick="calculate()" class="equal-button">=</button>
+            <button onclick="clearDisplay()" class="clear-button">C</button>
+        </div>
+    </div>
+
+    <script>
+        var display = document.getElementById('display');
+        var lastResult = null;
+        var expression = '';
+
+        // Create audio context
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        var audioCtx = new AudioContext();
+
+        function playButtonSound() {
+            // Create oscillator node
+            var oscillator = audioCtx.createOscillator();
+            oscillator.type = 'square'; // Change waveform to square
+            oscillator.frequency.setValueAtTime(1500, audioCtx.currentTime); // Increase frequency for a funnier sound
+
+            // Connect to audio context destination (speakers)
+            oscillator.connect(audioCtx.destination);
+
+            // Start and stop the sound after 0.1 seconds
+            oscillator.start();
+            setTimeout(function() {
+                oscillator.stop();
+            }, 100);
+        }
+
+        function addToDisplay(value) {
+            playButtonSound();
+            if (value === '=') {
+                expression += display.value;
+            } else {
+                expression += value;
+            }
+            display.value = expression;
+        }
+
+        function calculate() {
+            playButtonSound();
+            try {
+                lastResult = eval(expression);
+                display.value = lastResult;
+            } catch (error) {
+                display.value = 'שגיאה';
+            }
+            expression = lastResult.toString();
+        }
+
+        function clearDisplay() {
+            playButtonSound();
+            display.value = '';
+            expression = '';
+            lastResult = null;
+        }
+    </script>
+</body>
+
+</html>
